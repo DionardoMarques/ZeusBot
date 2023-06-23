@@ -6,11 +6,8 @@ import database
 from dotenv import load_dotenv
 
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from login import performLogin
 
 load_dotenv()
 
@@ -44,25 +41,8 @@ driver = webdriver.Chrome(options=options)
 
 driver.get(url)
 
-wait = WebDriverWait(driver, 10)
-
-try:
-    username_input = wait.until(EC.presence_of_element_located((By.ID, "username")))
-    password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
-
-    username_input.send_keys(zeus_user)
-    password_input.send_keys(zeus_password)
-
-    signin_button = wait.until(EC.presence_of_element_located((By.ID, "sign-in")))
-    
-    if signin_button.get_attribute("disabled") is None:
-        signin_button.click()
-    else:
-        print("Botão de signin está desabilitado. Não é possível continuar.")
-except TimeoutException as exception:
-    error_message = exception.args[0]
-
-    logging.error(error_message)
+status_login = performLogin(driver, zeus_user, zeus_password)
+print(status_login)
 
 input("Pressione enter para fechar a janela do navegador...")
 
