@@ -1,19 +1,21 @@
 import os
 import time
 import logging
-import database
+
+import db
+import auth
+import fetch
 
 from dotenv import load_dotenv
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from login import performLogin
 
 load_dotenv()
 
 # Credenciais ZEUS
-conn_db = database.MySQLConnection()
-zeus_credentials = database.getUser(conn_db)
+conn_mysql = db.MySQLConnection()
+zeus_credentials = db.getUser(conn_mysql)
 zeus_user = zeus_credentials[0][0]
 zeus_password = zeus_credentials[0][1]
 
@@ -41,8 +43,15 @@ driver = webdriver.Chrome(options=options)
 
 driver.get(url)
 
-status_login = performLogin(driver, zeus_user, zeus_password)
-print(status_login)
+status_login = auth.login(driver, zeus_user, zeus_password)
+
+if status_login == True:
+    # Dados designador
+    conn_firebird = db.FirebirdConnection()
+    designators_data = db.fetchData(conn_firebird)
+    
+    fetch.activities(driver, designators_data)
+    
 
 input("Pressione enter para fechar a janela do navegador...")
 

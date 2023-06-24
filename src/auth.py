@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-def performLogin(driver, zeus_user, zeus_password):
+def login(driver, zeus_user, zeus_password):
     wait = WebDriverWait(driver, 10)
     attemps = 7
     delay = 5
