@@ -36,7 +36,7 @@ def FirebirdConnection():
 
 def fetchData(conn_firebird):
     sql = conn_firebird.cursor()
-    sql.execute("SELECT FIRST 1 CADRESDIA.INSTANCIA FROM CADRESDIA WHERE CADRESDIA.DATA_AGENDAMENTO >= '06/24/2023' AND CADRESDIA.STATUS = 'E' AND CADRESDIA.CIDADE = 'PORTO ALEGRE'")
+    sql.execute("SELECT FIRST 10 CADRESDIA.INSTANCIA FROM CADRESDIA WHERE CADRESDIA.DATA_AGENDAMENTO >= '06/24/2023' AND CADRESDIA.STATUS = 'E' AND CADRESDIA.CIDADE = 'PORTO ALEGRE'")
     data = sql.fetchall()
     conn_firebird.close()
 

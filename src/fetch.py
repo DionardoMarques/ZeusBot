@@ -6,7 +6,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 
 def activities(driver, designators_data):
     wait = WebDriverWait(driver, 10)
@@ -14,9 +13,8 @@ def activities(driver, designators_data):
     try:
         print("Localizando barra de busca...")
 
+        # Input inicial quando a tela é carregada (sem nenhuma interação)
         search_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[contains(@placeholder, "Pesquisa em atividades")]')))
-        # search_input = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'search-bar-input')))
-        # search_input = wait.until(EC.presence_of_element_located((By.ID, "elId294")))
 
         if search_input:
             print("Barra de busca localizada!")
@@ -26,76 +24,48 @@ def activities(driver, designators_data):
         for designator in designators_data:
             print(designator)
 
-            search_input.send_keys(Keys.RETURN)
+            # Acionando o input que será carregado dinamicamente pela página (com interação)
+            search_input.send_keys(Keys.ENTER)
 
-            time.sleep(5)
+            # Redefinindo o XPATH do input que fará a busca do designador
+            search_input_clicked = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="search-bar-container"]/div[2]/div/div[1]/input')))
 
-            script = """
-                var designator = arguments[0];
+            # Inserindo o designador na barra de busca
+            search_input_clicked.send_keys(designator)
 
-                var searchInput = document.querySelector('input[data-bind^="textInput"]');
-                searchInput.value = designator;
+            # Retornando o resultado da busca
+            search_input_clicked.send_keys(Keys.ENTER)
 
-                // Trigger the necessary events to update the input field
-                var event = new Event('input', { bubbles: true });
-                searchInput.dispatchEvent(event);
-                event = new Event('change', { bubbles: true });
-                searchInput.dispatchEvent(event);
+            result_input = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "activity-title")))
 
-                // Trigger the Enter key event on the input field
-                var enterEvent = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', which: 13, keyCode: 13, bubbles: true });
-                searchInput.dispatchEvent(enterEvent);
-            """
+            if result_input:
+                print("Resultado encontrado!")
+            else:
+                print("Resultado não encontrado!")
 
-            driver.execute_script(script, designator)
+            result_input.click()
 
-            # time.sleep(2)
-            # # Move the mouse to the search_input element to activate it
-            # ActionChains(driver).move_to_element(search_input).perform()
-            # print("Action concluida")
-            # time.sleep(2)
+            customer_button = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[1]/div[2]/div/div[2]/div[1]/div/a')))
 
-            # Insert the designator into the active search_input element
-            # search_input.send_keys(designator)
-            # print("Inserido o designador")
-            # time.sleep(2)
+            if customer_button:
+                print("Botão encontrado!")
+            else:
+                print("Botão não encontrado!")
 
-            # # Simulate pressing Enter to trigger the search
-            # search_input.send_keys(Keys.RETURN)
-            # print("Apertado o enter")
-            # time.sleep(2)
+            customer_button.click()
 
-            # driver.execute_script("arguments[0].value = arguments[1];", search_input, designator)
-            # print("Tentativa de inserção!")
-            # time.sleep(5)
+            customer_name_field = wait.until(EC.presence_of_element_located((By.ID, "id_index_41")))
+            customer_email_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[6]/div[1]/div/a')))
+            customer_contact_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[7]/div[1]/div/a')))
+            customer_contact2_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[10]/div[1]/div/a')))
 
-            # driver.execute_script("arguments[0].click();", search_input)
-            # driver.execute_script("arguments[0].click();", search_input)
-            
-            # search_input = wait.until(EC.presence_of_element_located((By.XPATH, '//input[contains(@placeholder, "Pesquisa em atividades")]')))
-            # time.sleep(5)
-            # search_input.send_keys(designator)
-            # search_input.click()
-            # driver.execute_script("arguments[0].click();", search_input)
+            print(customer_name_field.text)
+            print(customer_email_field.text)
+            print(customer_contact_field.text)
+            print(customer_contact2_field.text)
 
-            # search_input.send_keys(Keys.RETURN)
-
-            # search_input.send_keys(designator)
-
-            # search_input.send_keys("PAE")
-            # time.sleep(5)
-            # search_input.clear()
-            # search_input.click()
-            # search_input.clear()
-
-            # result_input = wait.until(EC.presence_of_element_located((By.ID, "oj-collapsible-10-content")))
-
-            # if result_input:
-            #     print("Resultado encontrado!")
-            # else:
-            #     print("Resultado não encontrado!")
-
-            # result_input.click()
+            driver.back()
+            driver.back()
 
     except TimeoutException as exception:
             if len(exception.args) > 0:
