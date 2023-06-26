@@ -21,6 +21,8 @@ def activities(driver, designators_data):
         else:
             print("Barra de busca não encontrada!")
 
+        # designators_data = ['PAE-V0001QJB68-013', 'PAE-V0001QPR9M-013', 'PAE-V0001QJ00O-013']
+
         for designator in designators_data:
             print(designator)
 
@@ -36,36 +38,66 @@ def activities(driver, designators_data):
             # Retornando o resultado da busca
             search_input_clicked.send_keys(Keys.ENTER)
 
-            result_input = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "activity-title")))
-
-            if result_input:
+            try:
+                result_input = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "activity-title")))
+            
                 print("Resultado encontrado!")
-            else:
+
+                result_input.click()
+
+                customer_button = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[1]/div[2]/div/div[2]/div[1]/div/a')))
+
+                customer_button.click()
+                
+                # Campo nome cliente
+                try:
+                    customer_name_field = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "id_index_41")))
+                    print(customer_name_field.text)
+                except TimeoutException:
+                    customer_name_field = "Não encontrado"
+                    print("Campo nome cliente não encontrado!")
+
+                # Campo email cliente
+                try:
+                    customer_email_field = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[6]/div[1]/div/a')))
+                    print(customer_email_field.text)
+                except TimeoutException:
+                    customer_email_field = "Não encontrado"
+                    print("Campo email não encontrado!")
+
+                # Campo contato cliente
+                try:
+                    customer_contact_field = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[7]/div[1]/div/a')))
+                    print(customer_contact_field.text)
+                except TimeoutException:
+                    customer_contact_field = "Não encontrado"
+                    print("Campo contato não encontrado!")
+
+                # Campo contato 2 cliente
+                try:
+                    customer_contact2_field = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[10]/div[1]/div/a')))
+                    print(customer_contact2_field.text)
+                except TimeoutException:
+                    customer_contact2_field = "Não encontrado"
+                    print("Campo contato 2 não encontrado!")
+
+                # Campo contato alternativo cliente
+                try:
+                    customer_alternative_contact_field = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[12]/div[1]/div/a')))
+                    print(customer_alternative_contact_field.text)
+                except TimeoutException:
+                    customer_alternative_contact_field = "Não encontrado"
+                    print("Campo contato alternativo não encontrado!")
+
+                driver.back()
+                driver.back()
+            except TimeoutException:
                 print("Resultado não encontrado!")
+                
+                search_input_clicked.clear()
+                search_input.send_keys(Keys.ENTER)
 
-            result_input.click()
-
-            customer_button = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[1]/div[2]/div/div[2]/div[1]/div/a')))
-
-            if customer_button:
-                print("Botão encontrado!")
-            else:
-                print("Botão não encontrado!")
-
-            customer_button.click()
-
-            customer_name_field = wait.until(EC.presence_of_element_located((By.ID, "id_index_41")))
-            customer_email_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[6]/div[1]/div/a')))
-            customer_contact_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[7]/div[1]/div/a')))
-            customer_contact2_field = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="context-layout"]/div/div/div[2]/div/div/div[2]/div[10]/div[1]/div/a')))
-
-            print(customer_name_field.text)
-            print(customer_email_field.text)
-            print(customer_contact_field.text)
-            print(customer_contact2_field.text)
-
-            driver.back()
-            driver.back()
+                pass
 
     except TimeoutException as exception:
             if len(exception.args) > 0:

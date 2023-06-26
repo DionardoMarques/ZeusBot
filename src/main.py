@@ -27,6 +27,7 @@ url = os.getenv("ZEUS_URL")
 options = Options()
 options.page_load_strategy = 'eager' # Elementos do DOM prontos, mas outros recursos como imagens talvez continuem carregando
 options.add_argument("--ignore-certificate-errors")
+options.add_argument("--disable-notifications")
 # options.add_argument("--start-maximized") # Abre em tela cheia o navegador
 # options.add_argument("--headless=new") # Não abre a interface do navegador
 
@@ -43,6 +44,7 @@ driver = webdriver.Chrome(options=options)
 
 driver.get(url)
 
+# Realizando login
 status_login = auth.login(driver, zeus_user, zeus_password)
 
 if status_login == True:
@@ -50,9 +52,12 @@ if status_login == True:
     conn_firebird = db.FirebirdConnection()
     designators_data = db.fetchData(conn_firebird)
     
+    # Buscando os dados dos clientes no ZEUS
     fetch.activities(driver, designators_data)
-    
 
+    # Deslogando
+    auth.logout(driver)
+    
 input("Pressione enter para fechar a janela do navegador...")
 
 # Fechando a instância do Webdriver

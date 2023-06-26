@@ -9,7 +9,7 @@ from selenium.common.exceptions import TimeoutException
 def login(driver, zeus_user, zeus_password):
     wait = WebDriverWait(driver, 5)
     attemps = 7
-    delay = 5
+    delay = 10
 
     status_login = False
 
@@ -36,20 +36,16 @@ def login(driver, zeus_user, zeus_password):
                     if manifest_attribute:
                         status_login = True
                         break
-                    else:
-                        print("Manifest attribute não encontrado, prosseguindo...")
                 except:
                     pass
-            else:
-                print("Botão de signin está desabilitado. Não é possível continuar.")
 
             # Verificando se a senha está incorreta
             try:
                 print("Verificando se a senha está incorreta...")
 
-                wrong_password_alert = wait.until(EC.presence_of_element_located((By.ID, "notification-message-block")))
-                password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
-                signin_button = wait.until(EC.presence_of_element_located((By.ID, "sign-in")))
+                wrong_password_alert = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "notification-message-block")))
+                password_input = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "password")))
+                signin_button = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "sign-in")))
 
                 password_input.send_keys(zeus_password)
                 signin_button.click()
@@ -60,8 +56,6 @@ def login(driver, zeus_user, zeus_password):
                     if manifest_attribute:
                         status_login = True
                         break
-                    else:
-                        print("Manifest attribute não encontrado, prosseguindo...")
                 except:
                     pass
             except TimeoutException:
@@ -71,9 +65,9 @@ def login(driver, zeus_user, zeus_password):
             try:
                 print("Verificando se o número de sessões foi excedido...")
 
-                delsession_checkbox = wait.until(EC.presence_of_element_located((By.ID, "delsession")))
-                password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
-                signin_button = wait.until(EC.presence_of_element_located((By.ID, "sign-in")))
+                delsession_checkbox = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "delsession")))
+                password_input = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "password")))
+                signin_button = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "sign-in")))
                 
                 password_input.send_keys(zeus_password)
                 delsession_checkbox.click()
@@ -85,8 +79,6 @@ def login(driver, zeus_user, zeus_password):
                     if manifest_attribute:
                         status_login = True
                         break
-                    else:
-                        print("Manifest attribute não encontrado, prosseguindo...")
                 except:
                     pass
             except TimeoutException:
@@ -103,3 +95,16 @@ def login(driver, zeus_user, zeus_password):
         time.sleep(delay)
 
     return status_login
+
+def logout(driver):
+    wait = WebDriverWait(driver, 5)
+    
+    print("Fazendo logout...")
+
+    user_menu_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "user-menu-region")))
+    
+    # Clicando no menu superior direito
+    user_menu_button.click()
+
+    logout_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "item-caption--logout")))
+    logout_button.click()

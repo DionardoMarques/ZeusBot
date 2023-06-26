@@ -1,6 +1,8 @@
 import os
+from datetime import date
 import mysql.connector
 import firebirdsql
+
 from dotenv import load_dotenv
 
 def MySQLConnection():
@@ -35,9 +37,12 @@ def FirebirdConnection():
     return conn_firebird
 
 def fetchData(conn_firebird):
+    data_atual = date.today()
+
     sql = conn_firebird.cursor()
-    sql.execute("SELECT FIRST 10 CADRESDIA.INSTANCIA FROM CADRESDIA WHERE CADRESDIA.DATA_AGENDAMENTO >= '06/24/2023' AND CADRESDIA.STATUS = 'E' AND CADRESDIA.CIDADE = 'PORTO ALEGRE'")
+    sql.execute("SELECT CADRESDIA.INSTANCIA FROM CADRESDIA WHERE CADRESDIA.DATA_AGENDAMENTO >= ? AND CADRESDIA.STATUS = 'E' AND CADRESDIA.CIDADE = 'PORTO ALEGRE'", (data_atual,))
     data = sql.fetchall()
+
     conn_firebird.close()
 
     return data
