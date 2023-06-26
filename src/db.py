@@ -37,12 +37,18 @@ def FirebirdConnection():
     return conn_firebird
 
 def fetchData(conn_firebird):
-    data_atual = date.today()
+    current_date = date.today()
 
     sql = conn_firebird.cursor()
-    sql.execute("SELECT CADRESDIA.INSTANCIA FROM CADRESDIA WHERE CADRESDIA.DATA_AGENDAMENTO >= ? AND CADRESDIA.STATUS = 'E' AND CADRESDIA.CIDADE = 'PORTO ALEGRE'", (data_atual,))
+    sql.execute("SELECT CADRESDIA.INSTANCIA FROM CADRESDIA WHERE CADRESDIA.DATA_AGENDAMENTO >= ? AND CADRESDIA.STATUS = 'E' AND CADRESDIA.CIDADE = 'PORTO ALEGRE'", (current_date,))
     data = sql.fetchall()
 
     conn_firebird.close()
 
     return data
+
+def insertData(zeus_data):
+    current_date = date.today()
+
+    for data in zeus_data:
+        print(data)

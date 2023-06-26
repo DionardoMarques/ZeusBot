@@ -7,11 +7,15 @@ import auth
 import fetch
 
 from dotenv import load_dotenv
+from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 load_dotenv()
+
+now = datetime.now()
+start_date = now.strftime("%d/%m/%Y %H:%M:%S")
 
 # Credenciais ZEUS
 conn_mysql = db.MySQLConnection()
@@ -53,10 +57,20 @@ if status_login == True:
     designators_data = db.fetchData(conn_firebird)
     
     # Buscando os dados dos clientes no ZEUS
-    fetch.activities(driver, designators_data)
+    zeus_data = fetch.activities(driver, designators_data)
+    
+    # Inserindo os dados coletados do ZEUS
+    db.insertData(zeus_data)
 
     # Deslogando
     auth.logout(driver)
+
+now = datetime.now()
+end_date = now.strftime("%d/%m/%Y %H:%M:%S")
+
+# print("Total atividades: ", len(zeus_data))
+print("Data e hora início: ", start_date)
+print("Data e hora fim: ", end_date)
     
 input("Pressione enter para fechar a janela do navegador...")
 
