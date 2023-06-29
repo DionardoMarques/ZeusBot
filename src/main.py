@@ -5,6 +5,7 @@ import logging
 import db
 import auth
 import fetch
+import notify
 
 from dotenv import load_dotenv
 from datetime import datetime
@@ -12,10 +13,13 @@ from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+logging.basicConfig(filename='logs/main.log', level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+
 load_dotenv()
 
 now = datetime.now()
 start_date = now.strftime("%d/%m/%Y %H:%M:%S")
+start_time = now.strftime("%H:%M:%S")
 
 # Credenciais ZEUS
 conn_mysql = db.MySQLConnection()
@@ -32,8 +36,8 @@ options = Options()
 options.page_load_strategy = 'eager' # Elementos do DOM prontos, mas outros recursos como imagens talvez continuem carregando
 options.add_argument("--ignore-certificate-errors")
 options.add_argument("--disable-notifications")
-# options.add_argument("--start-maximized") # Abre em tela cheia o navegador
 # options.add_argument("--headless=new") # Não abre a interface do navegador
+# options.add_argument("--start-maximized") # Abre em tela cheia o navegador
 
 # Inicializando a instância do Webdriver
 driver = webdriver.Chrome(options=options)
@@ -59,20 +63,34 @@ if status_login == True:
     # Buscando os dados dos clientes no ZEUS
     zeus_data = fetch.activities(driver, designators_data)
     
-    # Inserindo os dados coletados do ZEUS
-    db.insertData(zeus_data)
+    # Atualizando os dados da tabela CAD_CONTATO com os dados coletados do ZEUS
+    db.updateData(conn_firebird, zeus_data)
+
+    conn_firebird.close()
 
     # Deslogando
     auth.logout(driver)
+    time.sleep(1)
+else:
+    notify.wrongPassword()
 
 now = datetime.now()
 end_date = now.strftime("%d/%m/%Y %H:%M:%S")
+end_time = now.strftime("%H:%M:%S")
 
-# print("Total atividades: ", len(zeus_data))
-print("Data e hora início: ", start_date)
-print("Data e hora fim: ", end_date)
+start_datetime = datetime.strptime(start_time, "%H:%M:%S")
+end_datetime = datetime.strptime(end_time, "%H:%M:%S")
+
+duration = end_datetime - start_datetime
+
+print("Total atividades:", len(zeus_data))
+print("Tempo total de duração:", duration)
+print("Data e hora início:", start_date)
+print("Data e hora fim:", end_date)
+
+logging.info(f"\nTotal atividades: {str(len(zeus_data))}\nTempo total: {str(duration)}\nData e hora inicio: {str(start_date)}\nData e hora fim: {str(end_date)}")
     
-input("Pressione enter para fechar a janela do navegador...")
+# input("Pressione enter para fechar a janela do navegador...")
 
 # Fechando a instância do Webdriver
 driver.quit()

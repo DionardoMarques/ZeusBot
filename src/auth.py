@@ -15,12 +15,16 @@ def login(driver, zeus_user, zeus_password):
 
     for attempt in range(1, attemps + 1):
         print(f"Tentativa de login: {attempt}")
-
+        
+        # Realizando login
         try:
             print("Realizando login...")
-            # Realizando login
+
             username_input = wait.until(EC.presence_of_element_located((By.ID, "username")))
             password_input = wait.until(EC.presence_of_element_located((By.ID, "password")))
+
+            username_input.clear()
+            password_input.clear()
 
             username_input.send_keys(zeus_user)
             password_input.send_keys(zeus_password)
@@ -44,10 +48,16 @@ def login(driver, zeus_user, zeus_password):
                 print("Verificando se a senha está incorreta...")
 
                 wrong_password_alert = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "notification-message-block")))
+                username_input = wait.until(EC.presence_of_element_located((By.ID, "username")))
                 password_input = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "password")))
                 signin_button = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "sign-in")))
 
+                username_input.clear()
+                password_input.clear()
+
+                username_input.send_keys(zeus_user)
                 password_input.send_keys(zeus_password)
+
                 signin_button.click()
 
                 try:
@@ -66,10 +76,16 @@ def login(driver, zeus_user, zeus_password):
                 print("Verificando se o número de sessões foi excedido...")
 
                 delsession_checkbox = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "delsession")))
+                username_input = wait.until(EC.presence_of_element_located((By.ID, "username")))
                 password_input = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "password")))
-                signin_button = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "sign-in")))
+                signin_button = WebDriverWait(driver, 1).until  (EC.presence_of_element_located((By.ID, "sign-in")))
+
+                username_input.clear()
+                password_input.clear()
                 
+                username_input.send_keys(zeus_user)
                 password_input.send_keys(zeus_password)
+
                 delsession_checkbox.click()
                 signin_button.click()
 
@@ -101,10 +117,14 @@ def logout(driver):
     
     print("Fazendo logout...")
 
-    user_menu_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "user-menu-region")))
-    
-    # Clicando no menu superior direito
-    user_menu_button.click()
+    try:
+        user_menu_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "user-menu-region")))
+        user_menu_button.click()
+    except:
+        print("Erro ao tentar acessar o menu do usuário")
 
-    logout_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "item-caption--logout")))
-    logout_button.click()
+    try:
+        logout_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "item-caption--logout")))
+        logout_button.click()
+    except:
+        print("Erro ao tentar deslogar o atual usuário")
