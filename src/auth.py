@@ -1,6 +1,8 @@
 import time
 import logging
 
+import logger
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,11 +15,13 @@ def login(driver, zeus_user, zeus_password):
 
     status_login = False
 
+    auth_logger = logger.setupLogger('auth_logs', 'logs/auth.log')
+
+    # Realizando login
     for attempt in range(1, attemps + 1):
-        print(f"Tentativa de login: {attempt}")
-        
-        # Realizando login
         try:
+            print(f"Tentativa de login: {attempt}")
+
             print("Realizando login...")
 
             username_input = wait.until(EC.presence_of_element_located((By.ID, "username")))
@@ -39,6 +43,9 @@ def login(driver, zeus_user, zeus_password):
 
                     if manifest_attribute:
                         status_login = True
+                        
+                        auth_logger.info(f"Login realizado com sucesso! Quantidade de tentativas: {attempt}")
+
                         break
                 except:
                     pass
@@ -65,10 +72,13 @@ def login(driver, zeus_user, zeus_password):
 
                     if manifest_attribute:
                         status_login = True
+
+                        auth_logger.info(f"Login realizado com sucesso! Quantidade de tentativas: {attempt}")
+
                         break
                 except:
                     pass
-            except TimeoutException:
+            except:
                 pass
 
             # Verificando se o número de sessões foi excedido
@@ -94,19 +104,22 @@ def login(driver, zeus_user, zeus_password):
 
                     if manifest_attribute:
                         status_login = True
+
+                        auth_logger.info(f"Login realizado com sucesso! Quantidade de tentativas: {attempt}")
+
                         break
                 except:
                     pass
-            except TimeoutException:
+            except:
                 pass
+                
+        except Exception as exception:
+            print(f"Erro durante login: {str(exception)}")
 
-        except TimeoutException as exception:
-            if len(exception.args) > 0:
-                error_message = exception.args[0]
-                logging.error(error_message)
-            else:
-                logging.error("Ocorreu uma exceção, mas nenhuma mensagem de erro foi retornada.")
-        
+            auth_logger.exception(exception)
+
+            pass
+
         # Delay para tentar novamente o login e não levar timeout do ZEUS
         time.sleep(delay)
 
@@ -115,16 +128,15 @@ def login(driver, zeus_user, zeus_password):
 def logout(driver):
     wait = WebDriverWait(driver, 5)
     
-    print("Fazendo logout...")
-
     try:
+        print("Fazendo logout...")
+    
         user_menu_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "user-menu-region")))
         user_menu_button.click()
-    except:
-        print("Erro ao tentar acessar o menu do usuário")
 
-    try:
         logout_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "item-caption--logout")))
         logout_button.click()
-    except:
-        print("Erro ao tentar deslogar o atual usuário")
+
+        print("Logout realizado!")
+    except Exception as exception:
+        auth_logger.exception(f"Erro ao tentar deslogar o usuário atual: {str(exception)}")

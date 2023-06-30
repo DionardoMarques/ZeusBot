@@ -1,5 +1,6 @@
 import time
 import logging
+import logger
 
 from datetime import datetime
 
@@ -91,8 +92,6 @@ def activities(driver, designators_data):
             driver.back()
             
         except Exception as exception:
-            logging.basicConfig(filename='logs/db_exceptions.log', level=logging.ERROR, format='%(asctime)s %(levelname)s: %(message)s')
-            
             now = datetime.now()
             end_date = now.strftime("%m/%d/%Y %H:%M:%S")
 
@@ -113,13 +112,14 @@ def activities(driver, designators_data):
 
                 pass
             else:
-                logging.error(exception)
-                
                 zeus_data.append([designator, 'E', 'E', 'E', 'E', 'E', exception, start_date, end_date])
 
                 print("Recarregando a página...")
                 driver.refresh()
 
                 pass
+
+            fetch_logger = logger.setupLogger('fetch_logs', 'logs/fetch_exceptions.log')
+            fetch_logger.exception(f"Designador: {designator}")
 
     return zeus_data

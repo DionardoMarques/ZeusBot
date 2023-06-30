@@ -4,6 +4,8 @@ import logging
 import mysql.connector
 import firebirdsql
 
+import logger
+
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
@@ -59,14 +61,12 @@ def fetchData(conn_firebird):
     # sql.execute("SELECT DISTINCT DESIGNADOR FROM (SELECT DISTINCT CADBACKLOG.INSTANCIA AS DESIGNADOR FROM CADBACKLOG INNER JOIN CADCONTATO ON (CADBACKLOG.INSTANCIA = CADCONTATO.DESIGNADOR AND CADCONTATO.ATUALIZACAO IS NULL) WHERE CADBACKLOG.DATA_PROMESSA = ? AND CADBACKLOG.STATUS_BA = 'AGENDADA' AND CADBACKLOG.SERVICO = ? AND CADBACKLOG.INSTANCIA <> '0' UNION ALL SELECT DISTINCT CADBACKTT.ISNTANCIA AS DESIGNADOR FROM CADBACKTT INNER JOIN CADCONTATO ON (CADBACKTT.ISNTANCIA = CADCONTATO.DESIGNADOR AND CADCONTATO.ATUALIZACAO IS NULL) WHERE CADBACKTT.VENCIMENTO >= ? AND CADBACKTT.VENCIMENTO < ? AND CADBACKTT.STATUS = 'AGENDADA' AND CADBACKTT.EMPRESA = 'TLSV') ORDER BY DESIGNADOR", (promise_date, available_filter, promise_date, expiration_date))
     
     # Apenas BA e CLUSTER PAE
-    sql.execute("SELECT DISTINCT DESIGNADOR FROM (SELECT DISTINCT CADBACKLOG.INSTANCIA AS DESIGNADOR FROM CADBACKLOG INNER JOIN CADCONTATO ON (CADBACKLOG.INSTANCIA = CADCONTATO.DESIGNADOR AND CADCONTATO.ATUALIZACAO IS NULL) WHERE CADBACKLOG.DATA_PROMESSA = ? AND CADBACKLOG.STATUS_BA = 'AGENDADA' AND CADBACKLOG.SERVICO = ? AND CADBACKLOG.CLUSTER = 'CLUSTER PAE' AND CADBACKLOG.INSTANCIA <> '0') ORDER BY DESIGNADOR", (promise_date, available_filter))
+    sql.execute("SELECT FIRST 1 DISTINCT DESIGNADOR FROM (SELECT DISTINCT CADBACKLOG.INSTANCIA AS DESIGNADOR FROM CADBACKLOG INNER JOIN CADCONTATO ON (CADBACKLOG.INSTANCIA = CADCONTATO.DESIGNADOR AND CADCONTATO.ATUALIZACAO IS NULL) WHERE CADBACKLOG.DATA_PROMESSA = ? AND CADBACKLOG.STATUS_BA = 'AGENDADA' AND CADBACKLOG.SERVICO = ? AND CADBACKLOG.CLUSTER = 'CLUSTER PAE' AND CADBACKLOG.INSTANCIA <> '0') ORDER BY DESIGNADOR", (promise_date, available_filter))
     data = sql.fetchall()
 
     return data
 
 def updateData(conn_firebird, zeus_data):
-    logging.basicConfig(filename='logs/db_exceptions.log', level=logging.ERROR, format='%(asctime)s %(levelname)s: %(message)s')
-
     now = datetime.now()
     update_date = now.strftime("%m/%d/%Y %H:%M:%S")
 
@@ -84,20 +84,21 @@ def updateData(conn_firebird, zeus_data):
         end_date = data[8]
 
         # Update na tabela CAD_CONTATO Firebird
-        try:
-            sql = conn_firebird.cursor()
+        # try:
+        #     sql = conn_firebird.cursor()
             
-            if customer_name == 'E' or customer_email == 'E' or customer_contact == 'E' or customer_contact2 == 'E' or customer_contact3 == 'E':
-                sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, designator))
-            else:
-                sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ?, ATUALIZACAO = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, update_date, designator))
+        #     if customer_name == 'E' or customer_email == 'E' or customer_contact == 'E' or customer_contact2 == 'E' or customer_contact3 == 'E':
+        #         sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, designator))
+        #     else:
+        #         sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ?, ATUALIZACAO = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, update_date, designator))
             
-            conn_firebird.commit()
+        #     conn_firebird.commit()
 
-            print("Atualização de dados realizada com sucesso!")
-        except Exception as exception:
-            conn_firebird.rollback()
+        #     print("Atualização de dados realizada com sucesso!")
+        # except Exception as exception:
+        #     conn_firebird.rollback()
 
-            logging.exception("Erro ao atualizar o banco de dados!")
+        #     db_logger = logger.setupLogger('db_logs', 'logs/db_exceptions.log')
+        #     db_logger.exception(exception)
 
-            print(f"Update falhou: {str(exception)}")
+        #     print(f"Update falhou: {str(exception)}")
