@@ -83,22 +83,22 @@ def updateData(conn_firebird, zeus_data):
         start_date = data[7]
         end_date = data[8]
 
-        # Update na tabela CAD_CONTATO Firebird
-        # try:
-        #     sql = conn_firebird.cursor()
+        #Update na tabela CAD_CONTATO Firebird
+        try:
+            sql = conn_firebird.cursor()
             
-        #     if customer_name == 'E' or customer_email == 'E' or customer_contact == 'E' or customer_contact2 == 'E' or customer_contact3 == 'E':
-        #         sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, designator))
-        #     else:
-        #         sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ?, ATUALIZACAO = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, update_date, designator))
+            if customer_name == 'E' or customer_email == 'E' or customer_contact == 'E' or customer_contact2 == 'E' or customer_contact3 == 'E':
+                sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, designator))
+            else:
+                sql.execute("UPDATE CADCONTATO SET NOME = ?, EMAIL = ?, CONTATO = ?, CONTATO2 = ?, CONTATO3 = ?, INICIO = ?, TERMINO = ?, LOG = ?, ATUALIZACAO = ? WHERE DESIGNADOR = ?", (customer_name, customer_email, customer_contact, customer_contact2, customer_contact3, start_date, end_date, log, update_date, designator))
             
-        #     conn_firebird.commit()
+            conn_firebird.commit()
 
-        #     print("Atualização de dados realizada com sucesso!")
-        # except Exception as exception:
-        #     conn_firebird.rollback()
+            print("Atualização de dados realizada com sucesso!")
+        except Exception as exception:
+            conn_firebird.rollback()
 
-        #     db_logger = logger.setupLogger('db_logs', 'logs/db_exceptions.log')
-        #     db_logger.exception(exception)
+            db_logger = logger.setupLogger('db_logs', 'logs/db_exceptions.log')
+            db_logger.exception(exception)
 
-        #     print(f"Update falhou: {str(exception)}")
+            print(f"Update falhou: {str(exception)}")

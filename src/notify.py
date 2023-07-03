@@ -1,17 +1,59 @@
-import win32com.client as win32
+import smtplib
+from email.message import EmailMessage
 
-def wrongPassword(start_date):
-    outlook = win32.Dispatch('outlook.application')
+def botStarted(start_date):
+    message = EmailMessage()
+
+    message['Subject'] = 'ZeusBot Iniciado'
+    message['From'] = 'email.sam@tlsv.com.br'
+    message['To'] = 'dionardo.marques@tlsv.com.br'
     
-    mail = outlook.CreateItem(0)
-    # mail.To = 'importacao.falhas@tlsv.com.br'
-    mail.To = 'dionardo.marques@tlsv.com.br'
-    mail.Subject = 'Senha errada ZeusBot'
-    mail.Body = 'Houveram 7 tentativas de login e todas falharam. Possivelmente a senha atual está desatualizada.'
-    # mail.HTMLBody = '<h2>HTML Message body</h2>' #this field is optional
+    message.set_content(f"ZeusBot iniciado na data e hora: {start_date}")
 
-    # To attach a file to the email (optional):
-    # attachment  = "Path to the attachment"
-    # mail.Attachments.Add(attachment)
+    smtp_server = '192.168.30.252'
+    smtp_port = 587
+    smtp_username = 'email.sam'
+    smtp_password = 'TLS**gvt25'
 
-    mail.Send()
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(message)
+
+def botFinished(end_date, start_date, duration, zeus_data):
+    message = EmailMessage()
+
+    message['Subject'] = 'ZeusBot Finalizado'
+    message['From'] = 'email.sam@tlsv.com.br'
+    message['To'] = 'dionardo.marques@tlsv.com.br'
+    
+    message.set_content(f"\nTotal atividades: {str(len(zeus_data))}\nTempo total: {str(duration)}\nData e hora inicio: {str(start_date)}\nData e hora fim: {str(end_date)}")
+
+    smtp_server = '192.168.30.252'
+    smtp_port = 587
+    smtp_username = 'email.sam'
+    smtp_password = 'TLS**gvt25'
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(message)
+
+def wrongPassword():
+    message = EmailMessage()
+
+    message['Subject'] = 'ZeusBot Senha Errada'
+    message['From'] = 'email.sam@tlsv.com.br'
+    message['To'] = 'importacao.falhas@tlsv.com.br'
+    
+    message.set_content("Foram realizadas 7 tentativas de login no ZEUS. Provavelmente a senha está incorreta.")
+
+    smtp_server = '192.168.30.252'
+    smtp_port = 587
+    smtp_username = 'email.sam'
+    smtp_password = 'TLS**gvt25'
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(message)

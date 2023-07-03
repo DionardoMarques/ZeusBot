@@ -22,11 +22,12 @@ HOST = ''
 PORT = 1234
 
 def startBot():
-    # notify.botStarted() # Criar função de notificação via e-mail para início do bot
-
     now = datetime.now()
     start_date = now.strftime("%d/%m/%Y %H:%M:%S")
     start_time = now.strftime("%H:%M:%S")
+
+    # Email bot iniciado
+    notify.botStarted(start_date)
 
     # Credenciais ZEUS
     conn_mysql = db.MySQLConnection()
@@ -43,7 +44,7 @@ def startBot():
     options.page_load_strategy = 'eager' # Elementos do DOM prontos, mas outros recursos como imagens talvez continuem carregando
     options.add_argument("--ignore-certificate-errors")
     options.add_argument("--disable-notifications")
-    # options.add_argument("--headless=new") # Não abre a interface do navegador
+    options.add_argument("--headless=new") # Não abre a interface do navegador
     # options.add_argument("--start-maximized") # Abre em tela cheia o navegador
 
     # Inicializando a instância do Webdriver
@@ -77,6 +78,7 @@ def startBot():
 
         # Deslogando
         auth.logout(driver)
+        time.sleep(1)
     else:
         notify.wrongPassword()
 
@@ -99,6 +101,9 @@ def startBot():
 
     # input("Pressione enter para fechar a janela do navegador...")
 
+    # Email bot finalizado
+    notify.botFinished(end_date, start_date, duration, zeus_data)
+
     # Fechando a instância do Webdriver
     driver.quit()
 
@@ -109,7 +114,7 @@ def handleConnection(conn):
     command = conn.recv(1024).decode()
     print(command)
 
-    if command == 'iniciarRobo':
+    if command == 'IniciarRobo':
         startBot()
 
     conn.close()
