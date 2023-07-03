@@ -106,7 +106,7 @@ def startBot():
 
     # Fechando a instância do Webdriver
     driver.quit()
-
+    
 def handleConnection(conn):
     address = conn.getpeername()
     print("Conexao estabelecida com:", address)

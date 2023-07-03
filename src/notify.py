@@ -1,5 +1,10 @@
+import os
 import smtplib
+
 from email.message import EmailMessage
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def botStarted(start_date):
     message = EmailMessage()
@@ -10,10 +15,10 @@ def botStarted(start_date):
     
     message.set_content(f"ZeusBot iniciado na data e hora: {start_date}")
 
-    smtp_server = '192.168.30.252'
-    smtp_port = 587
-    smtp_username = 'email.sam'
-    smtp_password = 'TLS**gvt25'
+    smtp_server = os.getenv("SMTP_SERVER")
+    smtp_port = os.getenv("SMTP_PORT")
+    smtp_username = os.getenv("SMTP_USERNAME")
+    smtp_password = os.getenv("SMTP_PASSWORD")
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -29,10 +34,10 @@ def botFinished(end_date, start_date, duration, zeus_data):
     
     message.set_content(f"\nTotal atividades: {str(len(zeus_data))}\nTempo total: {str(duration)}\nData e hora inicio: {str(start_date)}\nData e hora fim: {str(end_date)}")
 
-    smtp_server = '192.168.30.252'
-    smtp_port = 587
-    smtp_username = 'email.sam'
-    smtp_password = 'TLS**gvt25'
+    smtp_server = os.getenv("SMTP_SERVER")
+    smtp_port = os.getenv("SMTP_PORT")
+    smtp_username = os.getenv("SMTP_USERNAME")
+    smtp_password = os.getenv("SMTP_PASSWORD")
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
@@ -48,10 +53,10 @@ def wrongPassword():
     
     message.set_content("Foram realizadas 7 tentativas de login no ZEUS. Provavelmente a senha está incorreta.")
 
-    smtp_server = '192.168.30.252'
-    smtp_port = 587
-    smtp_username = 'email.sam'
-    smtp_password = 'TLS**gvt25'
+    smtp_server = os.getenv("SMTP_SERVER")
+    smtp_port = os.getenv("SMTP_PORT")
+    smtp_username = os.getenv("SMTP_USERNAME")
+    smtp_password = os.getenv("SMTP_PASSWORD")
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
