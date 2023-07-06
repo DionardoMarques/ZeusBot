@@ -62,3 +62,22 @@ def wrongPassword():
         server.starttls()
         server.login(smtp_username, smtp_password)
         server.send_message(message)
+
+def shutDownBot():
+    message = EmailMessage()
+
+    message['Subject'] = 'ZeusBot Não Executando'
+    message['From'] = 'email.sam@tlsv.com.br'
+    message['To'] = 'dionardo.marques@tlsv.com.br'
+    
+    message.set_content("Este email serve para avisar que alguma exceção ocorreu e o Zeus Bot não está mais rodando. Por favor verificar para o correto funcionamento do script.")
+
+    smtp_server = os.getenv("SMTP_SERVER")
+    smtp_port = os.getenv("SMTP_PORT")
+    smtp_username = os.getenv("SMTP_USERNAME")
+    smtp_password = os.getenv("SMTP_PASSWORD")
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(message)

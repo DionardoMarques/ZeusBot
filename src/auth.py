@@ -15,7 +15,7 @@ def login(driver, zeus_user, zeus_password):
 
     status_login = False
 
-    auth_logger = logger.setupLogger('auth_logs', 'logs/auth.log')
+    auth_logger = logger.setupLogger('auth_logs', r'C:\projects\ZeusBot\logs\auth.log')
 
     # Realizando login
     for attempt in range(1, attemps + 1):
@@ -126,6 +126,7 @@ def login(driver, zeus_user, zeus_password):
     return status_login
 
 def logout(driver):
+    auth_logger = logger.setupLogger('auth_logs', r'C:\projects\ZeusBot\logs\auth.log')
     wait = WebDriverWait(driver, 5)
     
     try:

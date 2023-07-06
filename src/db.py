@@ -98,7 +98,7 @@ def updateData(conn_firebird, zeus_data):
         except Exception as exception:
             conn_firebird.rollback()
 
-            db_logger = logger.setupLogger('db_logs', 'logs/db_exceptions.log')
+            db_logger = logger.setupLogger('db_logs', r'C:\projects\ZeusBot\logs\db_exceptions.log')
             db_logger.exception(exception)
 
             print(f"Update falhou: {str(exception)}")

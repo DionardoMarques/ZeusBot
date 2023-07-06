@@ -119,7 +119,7 @@ def activities(driver, designators_data):
 
                 pass
 
-            fetch_logger = logger.setupLogger('fetch_logs', 'logs/fetch_exceptions.log')
+            fetch_logger = logger.setupLogger('fetch_logs', r'C:\projects\ZeusBot\logs\fetch_exceptions.log')
             fetch_logger.exception(f"Designador: {designator}")
 
     return zeus_data
