@@ -126,7 +126,7 @@ def login(driver, zeus_user, zeus_password):
     return status_login
 
 def logout(driver):
-    auth_logger = logger.setupLogger('auth_logs', r'C:\projects\ZeusBot\logs\auth.log')
+    logout_logger = logger.setupLogger('logout_logs', r'C:\projects\ZeusBot\logs\logout_exceptions.log')
     wait = WebDriverWait(driver, 5)
     
     try:
@@ -140,4 +140,4 @@ def logout(driver):
 
         print("Logout realizado!")
     except Exception as exception:
-        auth_logger.exception(f"Erro ao tentar deslogar o usuário atual: {str(exception)}")
+        logout_logger.exception(f"Erro ao tentar deslogar o usuário atual: {str(exception)}")
